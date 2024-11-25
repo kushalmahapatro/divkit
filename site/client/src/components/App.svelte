@@ -1,32 +1,38 @@
 <script lang="ts">
-    import Header from './Header.svelte';
-    import Main from './Main.svelte';
-    import { setContext } from 'svelte';
-    import { derived, get, writable } from 'svelte/store';
-    import { LANGUAGE_CTX, LanguageContext } from '../data/languageContext';
-    import translations from '../auto/lang.json';
-    import PointingPopup from './PointingPopup.svelte';
+    import Header from "./Header.svelte";
+    import Main from "./Main.svelte";
+    import { setContext } from "svelte";
+    import { derived, get, writable } from "svelte/store";
+    import { LANGUAGE_CTX, LanguageContext } from "../data/languageContext";
+    import translations from "../auto/lang.json";
+    import PointingPopup from "./PointingPopup.svelte";
     // import LivePreview from './LivePreview.svelte';
     // import { viewModeStore } from '../data/viewModeStore';
-    import { isInitialLoading, isLoadError, isSamples } from '../data/session';
-    import Loader from './Loader.svelte';
-    import ErrorPage from './ErrorPage.svelte';
-    import type langObj from '../auto/lang.json';
+    import { isInitialLoading, isLoadError, isSamples } from "../data/session";
+    import Loader from "./Loader.svelte";
+    import ErrorPage from "./ErrorPage.svelte";
+    import type langObj from "../auto/lang.json";
 
-    let langVal = (location.pathname.match(/(\w+)\/playground/) || [])[1] || 'en';
-    if (langVal !== 'ru' && langVal !== 'en') {
-        langVal = 'en';
+    // let langVal = (location.pathname.match(/(\w+)\/playground/) || [])[1] || 'en';
+    let langVal = (location.pathname.match(/\/(\w+)(\/|$)/) || [])[1] || "en";
+    if (langVal !== "ru" && langVal !== "en") {
+        langVal = "en";
     }
-    let lang = writable<'ru' | 'en'>(langVal as 'ru' | 'en');
-    const l10n = derived(lang, lang => {
-        return (key: keyof typeof langObj['en'], overrideLang?: string) =>
+    let lang = writable<"ru" | "en">(langVal as "ru" | "en");
+    const l10n = derived(lang, (lang) => {
+        return (key: keyof (typeof langObj)["en"], overrideLang?: string) =>
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (translations as any)[overrideLang || lang]?.[key] || '';
+            (translations as any)[overrideLang || lang]?.[key] || "";
     });
 
-    lang.subscribe(val => {
+    lang.subscribe((val) => {
         if (val !== langVal) {
-            history.pushState(null, document.title, `/${val}/playground${location.search}`);
+            // history.pushState(null, document.title, `/${val}/playground${location.search}`);
+            history.pushState(
+                null,
+                document.title,
+                `/${val}${location.search}`,
+            );
             langVal = val;
         }
     });
@@ -36,25 +42,25 @@
         getLanguage(): string {
             return get(lang);
         },
-        setLanguage(name: 'ru' | 'en'): void {
+        setLanguage(name: "ru" | "en"): void {
             lang.set(name);
         },
         l10n,
         languagesList() {
-            return ['ru', 'en'];
-        }
+            return ["ru", "en"];
+        },
     });
 </script>
 
 <svelte:head>
-    <title>{`DivKit ${$l10n('playground')}`}</title>
+    <title>{`DivKit ${$l10n("playground")}`}</title>
 
-    <meta name="description" content={$l10n('description')}>
+    <meta name="description" content={$l10n("description")} />
 
     {#if $isSamples}
-        <link rel="canonical" href="https://divkit.tech/playground?samples=1">
+        <link rel="canonical" href="https://divkit.tech/playground?samples=1" />
     {:else}
-        <link rel="canonical" href="https://divkit.tech/playground">
+        <link rel="canonical" href="https://divkit.tech/playground" />
     {/if}
 </svelte:head>
 
@@ -62,7 +68,7 @@
     <ErrorPage />
 {:else if $isInitialLoading}
     <Loader />
-<!--{:else if $viewModeStore === 'preview'}
+    <!--{:else if $viewModeStore === 'preview'}
     <LivePreview />-->
 {:else}
     <Header />
@@ -73,7 +79,8 @@
 <style>
     @font-face {
         font-family: "YS Text Variable";
-        src: url(https://yastatic.net/s3/home/fonts/ys/3/text-variable-full.woff2) format('woff2-variations');
+        src: url(https://yastatic.net/s3/home/fonts/ys/3/text-variable-full.woff2)
+            format("woff2-variations");
         font-display: optional;
         font-weight: 400 700;
     }
@@ -84,17 +91,17 @@
 
     :root {
         --bg-primary: #fff;
-        --bg-secondary: #F1F1F1;
+        --bg-secondary: #f1f1f1;
         --text-primary: #000;
         --text-primary-semi: rgba(0, 0, 0, 0.4);
         --separator: rgba(179, 179, 179, 0.3);
 
-        --accent0: #FF9000;
+        --accent0: #ff9000;
         --accent0-text: #fff;
-        --accent1: #CC2FD5;
+        --accent1: #cc2fd5;
         --accent1-text: #fff;
         --accent1-semi: rgba(204, 47, 213, 0.5);
-        --accent2: #4039CD;
+        --accent2: #4039cd;
 
         --alt-bg: #252525;
         --alt-text: #fff;
@@ -111,9 +118,15 @@
 
     :global(html) {
         font-size: 16px;
-        font-family: 'YS Text Variable', system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+        font-family:
+            "YS Text Variable",
+            system-ui,
+            -apple-system,
+            BlinkMacSystemFont,
+            "Helvetica Neue",
+            sans-serif;
         font-variant-numeric: proportional-nums;
-        font-feature-settings: 'liga', 'kern', 'pnum';
+        font-feature-settings: "liga", "kern", "pnum";
         -webkit-font-smoothing: antialiased;
         line-height: 1.25;
     }

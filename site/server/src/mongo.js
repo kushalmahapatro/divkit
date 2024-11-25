@@ -1,6 +1,6 @@
 const util = require('util');
 const path = require('path');
-const {MongoClient} = require('mongodb');
+const { MongoClient } = require('mongodb');
 
 module.exports = {
     connectMongo,
@@ -8,7 +8,7 @@ module.exports = {
     setMongo
 };
 
-const cert = path.resolve(__dirname, '..', 'artifacts', 'YandexInternalRootCA.crt');
+// const cert = path.resolve(__dirname, '..', 'artifacts', 'YandexInternalRootCA.crt');
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -41,7 +41,7 @@ function connectMongo() {
 
     promise = Promise.resolve().then(() => {
         client = new MongoClient(url, {
-            sslCA: cert,
+            // sslCA: cert,
             readPreference: 'primaryPreferred'
         });
 
@@ -89,5 +89,5 @@ async function getMongo(uuid, projection = {}) {
 
     return collection.findOne({
         uuid
-    }, {projection});
+    }, { projection });
 }

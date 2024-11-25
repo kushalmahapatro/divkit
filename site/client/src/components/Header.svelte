@@ -1,10 +1,10 @@
 <script lang="ts">
-    import {getContext} from 'svelte';
-    import LanguageSelector from './LanguageSelector.svelte';
-    import { LANGUAGE_CTX, LanguageContext } from '../data/languageContext';
-    import LinksPopup from './LinksPopup.svelte';
+    import { getContext } from "svelte";
+    import LanguageSelector from "./LanguageSelector.svelte";
+    import { LANGUAGE_CTX, LanguageContext } from "../data/languageContext";
+    import LinksPopup from "./LinksPopup.svelte";
 
-    const {l10n, lang} = getContext<LanguageContext>(LANGUAGE_CTX);
+    const { l10n, lang } = getContext<LanguageContext>(LANGUAGE_CTX);
 
     let linksPopupShown = false;
     let linksPopup: HTMLElement;
@@ -32,15 +32,27 @@
         <div class="header__right">
             <ul class="header__links">
                 <li class="header__item">
-                    <a class="header__link" href="https://github.com/divkit/divkit" target="_blank" rel="noopener noreferrer">
+                    <a
+                        class="header__link"
+                        href="https://github.com/divkit/divkit"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
                         <div class="header__icon header__icon_github"></div>
                         GitHub
                     </a>
                 </li>
                 <li class="header__item">
-                    <a class="header__link" href={$lang === 'ru' ? 'https://t.me/divkit_community_ru' : 'https://t.me/divkit_community_en'} target="_blank" rel="noopener noreferrer">
+                    <a
+                        class="header__link"
+                        href={$lang === "ru"
+                            ? "https://t.me/divkit_community_ru"
+                            : "https://t.me/divkit_community_en"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
                         <div class="header__icon header__icon_telegram"></div>
-                        {$l10n('telegram')}
+                        {$l10n("telegram")}
                     </a>
                 </li>
             </ul>
@@ -52,18 +64,21 @@
         <div class="header__subnav-left">
             <ul class="header__subnav-links">
                 <li class="header__subnav-item">
-                    <a href="/playground" class="header__subnav-logo">
-                        {$l10n('playground')}
+                    <!-- <a href="/playground" class="header__subnav-logo"> -->
+                    <a href="" class="header__subnav-logo">
+                        {$l10n("playground")}
                     </a>
                 </li>
                 <li class="header__subnav-item">
-                    <a class="header__subnav-link" href="/playground?samples=1">
-                        {$l10n('samples')}
+                    <!-- <a class="header__subnav-link" href="/playground?samples=1"> -->
+                    <a class="header__subnav-link" href="?samples=1">
+                        {$l10n("samples")}
                     </a>
                 </li>
                 <li class="header__subnav-item">
-                    <a class="header__subnav-link" href="/playground?design=1">
-                        {$l10n('design')}
+                    <!-- <a class="header__subnav-link" href="/playground?design=1"> -->
+                    <a class="header__subnav-link" href="?design=1">
+                        {$l10n("design")}
                     </a>
                 </li>
             </ul>
@@ -74,12 +89,15 @@
                 <li class="header__subnav-item">
                     <button
                         class="header__subnav-link"
-                        on:click={() => linksPopupShown = !linksPopupShown}
-                        bind:this={linksButton}
-                    >{$l10n('share')}</button>
+                        on:click={() => (linksPopupShown = !linksPopupShown)}
+                        bind:this={linksButton}>{$l10n("share")}</button
+                    >
 
                     {#if linksPopupShown}
-                        <LinksPopup bind:node={linksPopup} on:close={() => linksPopupShown = false} />
+                        <LinksPopup
+                            bind:node={linksPopup}
+                            on:close={() => (linksPopupShown = false)}
+                        />
                     {/if}
                 </li>
             </ul>

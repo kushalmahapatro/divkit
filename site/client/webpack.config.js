@@ -27,7 +27,8 @@ const configCommon = {
         ]
     },
     resolve: {
-        extensions: [ '.tsx', '.ts', '.js', '.svelte' ],
+        extensions: ['.tsx', '.ts', '.js', '.svelte', '.d.ts'],
+        conditionNames: ['...', 'svelte'],
         /*fallback: {
             path: false,
             fs: false,
@@ -48,8 +49,14 @@ const configCommon = {
                 ],
             },
             {
+                test: /\.worker\.js$/,
+                use: {
+                    loader: 'worker-loader',
+                }
+            },
+            {
                 test: /\.(([jt]s)|svelte)$/,
-                resourceQuery: {not: /inline/},
+                resourceQuery: { not: /inline/ },
                 use: {
                     loader: require.resolve('babel-loader'),
                     options: {
@@ -145,7 +152,9 @@ module.exports = [{
         }),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.DefinePlugin({
-            'process.env.VERSION': JSON.stringify(VERSION)
+            'process.env.VERSION': JSON.stringify(VERSION),
+            'process.env.DEVTOOL': JSON.stringify(true),
+            'process.env.IS_PROD': JSON.stringify(isProd),
         })
     ],
     devServer: {
@@ -158,9 +167,13 @@ module.exports = [{
     ...configCommon,
     entry: {
         // monaco
-        'editor.worker': 'monaco-editor/esm/vs/editor/editor.worker.js',
-        'json.worker': 'monaco-editor/esm/vs/language/json/json.worker',
-        'typescript.worker': 'monaco-editor/esm/vs/language/typescript/ts.worker'
+        // 'editor.worker': 'monaco-editor/esm/vs/editor/editor.worker.js',
+        // 'json.worker': 'monaco-editor/esm/vs/language/json/json.worker',
+        // 'typescript.worker': 'monaco-editor/esm/vs/language/typescript/ts.worker'
+
+        'editor.worker': 'worker-loader!monaco-editor/esm/vs/editor/editor.worker.js',
+        'json.worker': 'worker-loader!monaco-editor/esm/vs/language/json/json.worker',
+        'typescript.worker': 'worker-loader!monaco-editor/esm/vs/language/typescript/ts.worker'
     },
     plugins: [
     ]

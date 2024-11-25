@@ -1,0 +1,6 @@
+{
+    "@divkitframework/divkit": "30.27.0",
+    "@divkitframework/jsonbuilder": "30.27.0",
+    "@divkitframework/visual-editor": "0.4.4",
+    "worker-loader": "3.0.8"
+}
