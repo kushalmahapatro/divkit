@@ -1,12 +1,15 @@
 <script lang="ts">
-    import { slide } from 'svelte/transition';
-    import { selectedLeaf } from '../data/webStructure';
-    import JsonView from './JsonView.svelte';
-    import StructureBox from './StructureBox.svelte';
-    import { getContext } from 'svelte';
-    import { LANGUAGE_CTX, LanguageContext } from '../data/languageContext';
+    import { slide } from "svelte/transition";
+    import { selectedLeaf } from "../data/webStructure";
+    import JsonView from "./JsonView.svelte";
+    import StructureBox from "./StructureBox.svelte";
+    import { getContext } from "svelte";
+    import {
+        LANGUAGE_CTX,
+        type LanguageContext,
+    } from "../data/languageContext";
 
-    const {l10n} = getContext<LanguageContext>(LANGUAGE_CTX);
+    const { l10n } = getContext<LanguageContext>(LANGUAGE_CTX);
 
     let expanded = false;
 
@@ -19,8 +22,18 @@
 
 <div class="structure-current">
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div class="structure-current__title" on:click={toggle}>
-        {$l10n('currentComponent')}
+    <div
+        class="structure-current__title"
+        on:click={toggle}
+        role="button"
+        tabindex="0"
+        on:keydown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                toggle(); // Allow activation with Enter or Space
+            }
+        }}
+    >
+        {$l10n("currentComponent")}
     </div>
     {#if expanded}
         <div class="structure-current__content" transition:slide>
@@ -31,7 +44,7 @@
                 {/if}
                 <JsonView json={currentJson} expanded={true} />
             {:else}
-                {$l10n('noStructure')}
+                {$l10n("noStructure")}
             {/if}
         </div>
     {/if}
@@ -51,7 +64,7 @@
         flex: 0 0 auto;
         padding: 12px 12px;
         cursor: pointer;
-        transition: background .1s ease-in-out;
+        transition: background 0.1s ease-in-out;
         user-select: none;
     }
 
@@ -68,6 +81,6 @@
     .structure-current__splitter {
         margin: 20px 0;
         border-top: 1px solid;
-        opacity: .4;
+        opacity: 0.4;
     }
 </style>

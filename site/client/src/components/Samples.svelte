@@ -1,42 +1,52 @@
 <script lang="ts">
-    import PanelHeader from './PanelHeader.svelte';
-    import { getContext } from 'svelte';
-    import { LANGUAGE_CTX, LanguageContext } from '../data/languageContext';
-    import type { TreeLeaf } from '../ctx/tree';
-    import { savedStore } from '../data/savedStore';
-    import { editorMode } from '../data/editorMode';
-    import { initialValueStore, valueStore } from '../data/valueStore';
-    import Tree from './Tree.svelte';
-    import { sampleWarningStore } from '../data/sampleWarningStore';
+    import PanelHeader from "./PanelHeader.svelte";
+    import { getContext } from "svelte";
+    import {
+        LANGUAGE_CTX,
+        type LanguageContext,
+    } from "../data/languageContext";
+    import type { TreeLeaf } from "../ctx/tree";
+    import { savedStore } from "../data/savedStore";
+    import { editorMode } from "../data/editorMode";
+    import { initialValueStore, valueStore } from "../data/valueStore";
+    import Tree from "./Tree.svelte";
+    import { sampleWarningStore } from "../data/sampleWarningStore";
 
-    const {l10n} = getContext<LanguageContext>(LANGUAGE_CTX);
+    const { l10n } = getContext<LanguageContext>(LANGUAGE_CTX);
 
-    const samples = require.context('../../../../test_data/samples/', true, /^\.\/.*$/, 'lazy-once');
+    const samples = require.context(
+        "../../../../test_data/samples/",
+        true,
+        /^\.\/.*$/,
+        "lazy-once",
+    );
 
     const promise = samples(samples.keys()[0]);
 
     let tree: TreeLeaf = {
-        id: 'root',
+        id: "root",
         props: {
-            name: 'Root'
+            name: "Root",
         },
-        childs: []
+        childs: [],
     };
 
     function appendKey(origKey: string, key: string): void {
-        const parts = key.split('/');
+        const parts = key.split("/");
         let leaf = tree;
         parts.forEach((part, index) => {
-            let child: TreeLeaf | undefined = leaf.childs.find(child => child.props.name === part);
+            let child: TreeLeaf | undefined = leaf.childs.find(
+                (child) => child.props.name === part,
+            );
             if (!child) {
                 child = {
-                    id: `root/${parts.slice(0, index + 1).join('/')}`,
+                    id: `root/${parts.slice(0, index + 1).join("/")}`,
                     props: {
                         name: part,
-                        key: index === parts.length -1 ? origKey : null
+                        key: index === parts.length - 1 ? origKey : null,
                     },
                     parent: leaf,
-                    childs: []
+                    childs: [],
                 };
                 leaf.childs.push(child);
             }
@@ -45,10 +55,10 @@
     }
 
     const keys = samples.keys();
-    keys.forEach(key => {
-        const trimmedKey = key.replace(/^\.\//, '').replace(/\.json$/, '');
+    keys.forEach((key) => {
+        const trimmedKey = key.replace(/^\.\//, "").replace(/\.json$/, "");
 
-        if (!trimmedKey.endsWith('/templates')) {
+        if (!trimmedKey.endsWith("/templates")) {
             appendKey(key, trimmedKey);
         }
     });
@@ -58,53 +68,68 @@
     }
 
     function onSelectionChange(event: CustomEvent<TreeLeaf | null>) {
-        if (!$savedStore && !confirm('Unsaved changes will be lost. Continue?')) {
+        if (
+            !$savedStore &&
+            !confirm("Unsaved changes will be lost. Continue?")
+        ) {
             return;
         }
 
         const key = event.detail?.props.key;
         if (key) {
-            const templatesKey = key.replace(/\/[^/]+\.json/, '/templates.json');
+            const templatesKey = key.replace(
+                /\/[^/]+\.json/,
+                "/templates.json",
+            );
             const jsonPromise = samples(key);
-            const templatesPromise = keys.includes(templatesKey) ? samples(templatesKey) : Promise.resolve(null);
+            const templatesPromise = keys.includes(templatesKey)
+                ? samples(templatesKey)
+                : Promise.resolve(null);
 
-            Promise.all([jsonPromise, templatesPromise]).then(([card, templates]) => {
-                let json;
+            Promise.all([jsonPromise, templatesPromise]).then(
+                ([card, templates]) => {
+                    let json;
 
-                if (card.card) {
-                    json = card;
-                } else if (templates) {
-                    json = {
-                        card,
-                        templates
-                    };
-                } else {
-                    json = {
-                        card
-                    };
-                }
+                    if (card.card) {
+                        json = card;
+                    } else if (templates) {
+                        json = {
+                            card,
+                            templates,
+                        };
+                    } else {
+                        json = {
+                            card,
+                        };
+                    }
 
-                editorMode.set('json');
-                const value = JSON.stringify(json, null, 4);
-                initialValueStore.set(value);
-                valueStore.set(value);
+                    editorMode.set("json");
+                    const value = JSON.stringify(json, null, 4);
+                    initialValueStore.set(value);
+                    valueStore.set(value);
 
-                sampleWarningStore.set(key.includes('base/size_units'));
-            });
+                    sampleWarningStore.set(key.includes("base/size_units"));
+                },
+            );
         }
     }
 </script>
 
 <div class="samples">
     <PanelHeader theme="filled">
-        <div slot="left">{$l10n('samples')}</div>
+        <div slot="left">{$l10n("samples")}</div>
     </PanelHeader>
 
     <div class="samples__content">
         {#await promise}
             <div class="samples__loading"></div>
         {:then}
-            <Tree root={tree} showRoot={false} getText={treeGetText} on:selectionchange={onSelectionChange} />
+            <Tree
+                root={tree}
+                showRoot={false}
+                getText={treeGetText}
+                on:selectionchange={onSelectionChange}
+            />
         {/await}
     </div>
 </div>

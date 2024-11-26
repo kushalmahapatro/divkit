@@ -1,12 +1,15 @@
 <script lang="ts">
-    import { slide } from 'svelte/transition';
-    import { selectedLeaf } from '../data/webStructure';
-    import JsonView from './JsonView.svelte';
-    import { valueStore } from '../data/valueStore';
-    import { getContext } from 'svelte';
-    import { LANGUAGE_CTX, LanguageContext } from '../data/languageContext';
+    import { slide } from "svelte/transition";
+    import { selectedLeaf } from "../data/webStructure";
+    import JsonView from "./JsonView.svelte";
+    import { valueStore } from "../data/valueStore";
+    import { getContext } from "svelte";
+    import {
+        LANGUAGE_CTX,
+        type LanguageContext,
+    } from "../data/languageContext";
 
-    const {l10n} = getContext<LanguageContext>(LANGUAGE_CTX);
+    const { l10n } = getContext<LanguageContext>(LANGUAGE_CTX);
 
     let expanded = false;
 
@@ -26,8 +29,8 @@
         }
 
         jsonList.push({
-            title: 'Source',
-            json: origJson
+            title: "Source",
+            json: origJson,
         });
 
         let json;
@@ -41,7 +44,7 @@
         while (item?.type && json?.templates && item.type in json.templates) {
             jsonList.push({
                 title: item.type,
-                json: json.templates[item.type]
+                json: json.templates[item.type],
             });
             item = json.templates[item.type];
         }
@@ -55,8 +58,18 @@
 
 <div class="structure-templates">
     <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div class="structure-templates__title" on:click={toggle}>
-        {$l10n('appliedTemplates')}
+    <div
+        class="structure-templates__title"
+        on:click={toggle}
+        role="button"
+        tabindex="0"
+        on:keydown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                toggle(); // Allow activation with Enter or Space
+            }
+        }}
+    >
+        {$l10n("appliedTemplates")}
     </div>
     {#if expanded}
         <div class="structure-templates__content" transition:slide>
@@ -68,7 +81,7 @@
                     <JsonView json={item.json} expanded={true} />
                 {/each}
             {:else}
-                {$l10n('noStructure')}
+                {$l10n("noStructure")}
             {/if}
         </div>
     {/if}
@@ -90,7 +103,7 @@
         padding: 12px 12px;
         cursor: pointer;
         user-select: none;
-        transition: background .1s ease-in-out;
+        transition: background 0.1s ease-in-out;
     }
 
     .structure-templates__title:hover {

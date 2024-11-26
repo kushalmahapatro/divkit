@@ -1,14 +1,14 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte';
-    import { fly } from 'svelte/transition';
+    import { createEventDispatcher } from "svelte";
+    import { fly } from "svelte/transition";
 
     export let value: string;
     export let items: {
         name: string;
         value: string;
     }[];
-    export let popupOrientation: 'left' | 'right' = 'left'
-    export let toggledClass = '';
+    export let popupOrientation: "left" | "right" = "left";
+    export let toggledClass = "";
 
     const dispatch = createEventDispatcher();
 
@@ -16,7 +16,7 @@
     let timer: number;
 
     $: if (value) {
-        dispatch('change');
+        dispatch("change");
     }
 
     function onMouseEnterOrClick(): void {
@@ -34,26 +34,34 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
-    class={'select' + (popupShown && toggledClass ? ' ' + toggledClass : '')}
+    class={"select" + (popupShown && toggledClass ? " " + toggledClass : "")}
     on:click={onMouseEnterOrClick}
     on:mouseenter={onMouseEnterOrClick}
     on:mouseleave={onMouseLeave}
+    role="button"
+    tabindex="0"
+    on:keydown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+            onMouseEnterOrClick(); // Allow activation with Enter or Space
+        }
+    }}
 >
     <slot />
 
     {#if popupShown}
         <div
             class="select__popup"
-            class:select__popup_orientation_right={popupOrientation === 'right'}
+            class:select__popup_orientation_right={popupOrientation === "right"}
             aria-hidden="true"
-            transition:fly={{y: 20, duration: 150}}
+            transition:fly={{ y: 20, duration: 150 }}
         >
             <ul class="select__list">
                 {#each items as item}
                     <li class="select__item">
                         <button
                             class="select__item-button"
-                            class:select__item-button_selected={value === item.value}
+                            class:select__item-button_selected={value ===
+                                item.value}
                             on:click={() => {
                                 value = item.value;
                             }}
@@ -98,7 +106,7 @@
         padding: 10px 10px;
         border-radius: 22px;
         background: var(--bg-primary);
-        box-shadow: 0 0 20px 2px rgba(0, 0, 0, .15);
+        box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.15);
     }
 
     .select__popup_orientation_right {
@@ -129,7 +137,7 @@
         text-align: left;
         cursor: pointer;
 
-        transition: .15s ease-in-out;
+        transition: 0.15s ease-in-out;
         transition-property: border-color, color;
     }
 

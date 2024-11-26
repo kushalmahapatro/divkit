@@ -1,7 +1,10 @@
 <script lang="ts">
     import { getContext } from "svelte";
     import LanguageSelector from "./LanguageSelector.svelte";
-    import { LANGUAGE_CTX, LanguageContext } from "../data/languageContext";
+    import {
+        LANGUAGE_CTX,
+        type LanguageContext,
+    } from "../data/languageContext";
     import LinksPopup from "./LinksPopup.svelte";
 
     const { l10n, lang } = getContext<LanguageContext>(LANGUAGE_CTX);
@@ -65,7 +68,7 @@
             <ul class="header__subnav-links">
                 <li class="header__subnav-item">
                     <!-- <a href="/playground" class="header__subnav-logo"> -->
-                    <a href="" class="header__subnav-logo">
+                    <a href="/" class="header__subnav-logo">
                         {$l10n("playground")}
                     </a>
                 </li>

@@ -9,7 +9,7 @@
 </script>
 
 <script>
-    import {fly} from 'svelte/transition';
+    import { fly } from "svelte/transition";
 
     let popup;
     let visible = false;
@@ -23,7 +23,7 @@
 
         return {
             top: bbox.bottom + 10,
-            left: bbox.left + bbox.width / 2 - 150
+            left: bbox.left + bbox.width / 2 - 150,
         };
     }
 
@@ -36,7 +36,12 @@
     };
 
     function onWindowClick(event) {
-        if (Date.now() - showTs > 1000 && event.target && popup && !popup.contains(event.target)) {
+        if (
+            Date.now() - showTs > 1000 &&
+            event.target &&
+            popup &&
+            !popup.contains(event.target)
+        ) {
             visible = false;
         }
     }
@@ -56,21 +61,25 @@
     <div
         bind:this={popup}
         class="pointing-popup"
-        style="left:{coords.left}px;top:{coords.top}px" transition:fly={{y: 40}}
+        style="left:{coords.left}px;top:{coords.top}px"
+        transition:fly={{ y: 40 }}
     >
         <div class="pointing-popup__tail"></div>
         <div class="pointing-popup__content">
             {msg}
         </div>
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <div class="pointing-popup__close" on:click={onCloseClick}></div>
+        <div
+            class="pointing-popup__close"
+            on:click={onCloseClick}
+            role="button"
+            tabindex="0"
+            on:keydown={(e) => e.key === "Enter" && onCloseClick()}
+        ></div>
     </div>
 {/if}
 
-<svelte:window
-    on:click={onWindowClick}
-    on:resize={onResize}
-/>
+<svelte:window on:click={onWindowClick} on:resize={onResize} />
 
 <style>
     .pointing-popup {
@@ -110,7 +119,7 @@
         width: 60px;
         height: 60px;
         background: no-repeat 50% 50% url(../assets/closeWhite.svg);
-        opacity: .6;
+        opacity: 0.6;
         appearance: none;
         cursor: pointer;
         border: none;

@@ -1,23 +1,27 @@
 <script lang="ts">
-    import {slide} from 'svelte/transition';
-    import type { ViewerError } from '../data/externalViewers';
-    import { getContext } from 'svelte';
-    import { LANGUAGE_CTX, LanguageContext } from '../data/languageContext';
+    import { slide } from "svelte/transition";
+    import type { ViewerError } from "../data/externalViewers";
+    import { getContext } from "svelte";
+    import {
+        LANGUAGE_CTX,
+        type LanguageContext,
+    } from "../data/languageContext";
 
-    const {l10n, lang} = getContext<LanguageContext>(LANGUAGE_CTX);
+    const { l10n, lang } = getContext<LanguageContext>(LANGUAGE_CTX);
 
     export let errors: ViewerError[];
 </script>
 
 <div class="error-view" transition:slide>
     {#if errors.length}
-        <ul class="error-view__list" >
+        <ul class="error-view__list">
             {#each errors as error}
                 <li class="error-view__item">
                     <details>
                         <summary
                             class="error-view__item-title"
-                            class:error-view__item-title_warning={error.level === 'warn'}
+                            class:error-view__item-title_warning={error.level ===
+                                "warn"}
                         >
                             {error.message}
                         </summary>
@@ -34,13 +38,20 @@
         </ul>
     {:else}
         <div class="error-view__empty">
-            {$l10n('noErrors')}
+            {$l10n("noErrors")}
         </div>
     {/if}
 
-    <a class="errors-view__telegram" href={$lang === 'ru' ? 'https://t.me/divkit_community_ru' : 'https://t.me/divkit_community_en'} target="_blank" rel="noopener noreferrer">
+    <a
+        class="errors-view__telegram"
+        href={$lang === "ru"
+            ? "https://t.me/divkit_community_ru"
+            : "https://t.me/divkit_community_en"}
+        target="_blank"
+        rel="noopener noreferrer"
+    >
         <div class="errors-view__telegram-icon"></div>
-        {$l10n('telegramError')}
+        {$l10n("telegramError")}
     </a>
 </div>
 
@@ -76,7 +87,7 @@
     }
 
     .error-view__item-title::marker {
-        content: '';
+        content: "";
     }
 
     .error-view__item-stack {

@@ -6,17 +6,20 @@
         selectedElem,
         selectedLeaf,
         webStructure,
-        webStructureMap
-    } from '../data/webStructure';
-    import StructureCurrent from './StructureCurrent.svelte';
-    import StructureTemplates from './StructureTemplates.svelte';
-    import Tree from './Tree.svelte';
-    import type { TreeLeaf } from '../ctx/tree';
-    import { panelStructure } from '../data/panels';
-    import { getContext } from 'svelte';
-    import { LANGUAGE_CTX, LanguageContext } from '../data/languageContext';
+        webStructureMap,
+    } from "../data/webStructure";
+    import StructureCurrent from "./StructureCurrent.svelte";
+    import StructureTemplates from "./StructureTemplates.svelte";
+    import Tree from "./Tree.svelte";
+    import type { TreeLeaf } from "../ctx/tree";
+    import { panelStructure } from "../data/panels";
+    import { getContext } from "svelte";
+    import {
+        LANGUAGE_CTX,
+        type LanguageContext,
+    } from "../data/languageContext";
 
-    const {l10n} = getContext<LanguageContext>(LANGUAGE_CTX);
+    const { l10n } = getContext<LanguageContext>(LANGUAGE_CTX);
 
     $: tree = $webStructure;
     let highlightLeaf: TreeLeaf | null = null;
@@ -75,16 +78,20 @@
 
 <div class="structure">
     <div class="structure__title">
-        {$l10n('structure')}
+        {$l10n("structure")}
 
         <button
             class="structure__select"
             class:structure__select_toggled={$highlightMode}
-            title={$l10n('selectComponent')}
+            title={$l10n("selectComponent")}
             on:click={toggleSelect}
         ></button>
 
-        <button class="structure__close" title="Close structure" on:click={() => panelStructure.set(false)}></button>
+        <button
+            class="structure__close"
+            title="Close structure"
+            on:click={() => panelStructure.set(false)}
+        ></button>
     </div>
 
     {#if tree}
@@ -100,7 +107,7 @@
         />
     {:else}
         <div class="structure__empty">
-            {$l10n('noStructure')}
+            {$l10n("noStructure")}
         </div>
     {/if}
 
@@ -140,12 +147,12 @@
         border: none;
         border-radius: 4px;
         cursor: pointer;
-        transition: .1s ease-in-out;
+        transition: 0.1s ease-in-out;
         transition-property: background-color, opacity;
     }
 
     .structure__select:hover {
-        opacity: .7;
+        opacity: 0.7;
     }
 
     .structure__select_toggled {
@@ -171,8 +178,8 @@
         border: none;
         border-radius: 4px;
         cursor: pointer;
-        opacity: .7;
-        transition: opacity .1s ease-in-out;
+        opacity: 0.7;
+        transition: opacity 0.1s ease-in-out;
     }
 
     .structure__close:hover {

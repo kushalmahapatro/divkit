@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { createEventDispatcher, setContext } from 'svelte';
-    import { writable } from 'svelte/store';
-    import TreeLeafView from './TreeLeaf.svelte';
-    import { treeDown, treeLeft, treeRight, treeUp } from '../utils/shortcuts';
-    import type { TreeContext, TreeGetText, TreeLeaf } from '../ctx/tree';
-    import { TREE_CTX } from '../ctx/tree';
+    import { createEventDispatcher, setContext } from "svelte";
+    import { writable } from "svelte/store";
+    import TreeLeafView from "./TreeLeaf.svelte";
+    import { treeDown, treeLeft, treeRight, treeUp } from "../utils/shortcuts";
+    import type { TreeContext, TreeGetText, TreeLeaf } from "../ctx/tree";
+    import { TREE_CTX } from "../ctx/tree";
 
     export let root: TreeLeaf;
     export let showRoot = true;
@@ -37,7 +37,10 @@
 
     $: linearList = linearize(root, $collapsedStore);
 
-    function linearize(tree: TreeLeaf | null, collapsed: Record<string, boolean>): TreeLeaf[] {
+    function linearize(
+        tree: TreeLeaf | null,
+        collapsed: Record<string, boolean>,
+    ): TreeLeaf[] {
         const res: TreeLeaf[] = [];
 
         function proc(leaf: TreeLeaf | null): void {
@@ -61,7 +64,9 @@
 
     function moveSelection(change: number): void {
         const selected = $selectedStore;
-        let current = selected ? linearList.findIndex(it => it === selected) : -1;
+        let current = selected
+            ? linearList.findIndex((it) => it === selected)
+            : -1;
 
         if (current === -1) {
             current = change === -1 ? 0 : linearList.length - 1;
@@ -77,7 +82,7 @@
         const leaf = linearList[current];
         selectedStore.set(leaf);
 
-        dispatch('keyboardhover', leaf);
+        dispatch("keyboardhover", leaf);
     }
 
     function collapseOrMoveToParent(): void {
@@ -95,7 +100,7 @@
         } else {
             collapsedStore.set({
                 ...collapsed,
-                [current.id]: true
+                [current.id]: true,
             });
         }
     }
@@ -111,7 +116,7 @@
         if (collapsed[current.id]) {
             collapsedStore.set({
                 ...collapsed,
-                [current.id]: false
+                [current.id]: false,
             });
         } else {
             if (current.childs.length) {
@@ -138,9 +143,11 @@
         event.preventDefault();
     }
 
-    function onChildSelect(event: CustomEvent<{
-        node: HTMLElement;
-    }>): void {
+    function onChildSelect(
+        event: CustomEvent<{
+            node: HTMLElement;
+        }>,
+    ): void {
         const node = event.detail.node;
         const bbox = node.getBoundingClientRect();
         const rootBbox = rootNode.getBoundingClientRect();
@@ -152,16 +159,18 @@
         }
     }
 
-    function onChildHover(event: CustomEvent<{
-        leaf: TreeLeaf;
-    }>): void {
-        dispatch('hover', event.detail.leaf);
+    function onChildHover(
+        event: CustomEvent<{
+            leaf: TreeLeaf;
+        }>,
+    ): void {
+        dispatch("hover", event.detail.leaf);
     }
 
-    selectedStore.subscribe(leaf => {
+    selectedStore.subscribe((leaf) => {
         if (leaf !== prevSelectedLeaf) {
             prevSelectedLeaf = leaf;
-            dispatch('selectionchange', leaf);
+            dispatch("selectionchange", leaf);
         }
     });
 
@@ -169,17 +178,31 @@
         collapsedStore,
         selectedStore,
         highlightStore,
-        getText
+        getText,
     });
 </script>
 
 <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-<div class="tree" tabindex="0" on:keydown={onKeydown} bind:this={rootNode}>
+<div
+    class="tree"
+    tabindex="0"
+    on:keydown={onKeydown}
+    bind:this={rootNode}
+    role="tree"
+>
     {#if showRoot}
-        <TreeLeafView leaf={root} on:selected={onChildSelect} on:hovered={onChildHover} />
+        <TreeLeafView
+            leaf={root}
+            on:selected={onChildSelect}
+            on:hovered={onChildHover}
+        />
     {:else}
         {#each root.childs as leaf}
-            <TreeLeafView {leaf} on:selected={onChildSelect} on:hovered={onChildHover} />
+            <TreeLeafView
+                {leaf}
+                on:selected={onChildSelect}
+                on:hovered={onChildHover}
+            />
         {/each}
     {/if}
 </div>

@@ -1,13 +1,17 @@
 <script lang="ts">
-    import { createEventDispatcher, getContext } from 'svelte';
-    import type { TreeContext, TreeLeaf } from '../ctx/tree';
-    import { TREE_CTX } from '../ctx/tree';
-    import { LANGUAGE_CTX, LanguageContext } from '../data/languageContext';
+    export let isSelected = false;
+    import { createEventDispatcher, getContext } from "svelte";
+    import type { TreeContext, TreeLeaf } from "../ctx/tree";
+    import { TREE_CTX } from "../ctx/tree";
+    import {
+        LANGUAGE_CTX,
+        type LanguageContext,
+    } from "../data/languageContext";
 
     export let leaf: TreeLeaf;
     export let level = 0;
 
-    const {l10n} = getContext<LanguageContext>(LANGUAGE_CTX);
+    const { l10n } = getContext<LanguageContext>(LANGUAGE_CTX);
 
     const dispatch = createEventDispatcher();
 
@@ -25,7 +29,7 @@
         const wasSelected = selected;
         selected = $selectedStore === leaf;
         if (selected && !wasSelected && node) {
-            dispatch('selected', { node });
+            dispatch("selected", { node });
         }
     }
 
@@ -38,16 +42,16 @@
     function onIconClick(): void {
         collapsedStore.set({
             ...$collapsedStore,
-            [leaf.id]: expanded
+            [leaf.id]: expanded,
         });
     }
 
     function onOver(): void {
-        dispatch('hovered', { leaf });
+        dispatch("hovered", { leaf });
     }
 
     function onOut(): void {
-        dispatch('hovered', { leaf: null });
+        dispatch("hovered", { leaf: null });
     }
 </script>
 
@@ -65,11 +69,26 @@
     on:mouseenter={onOver}
     on:mouseleave={onOut}
     bind:this={node}
+    role="treeitem"
+    tabindex="0"
+    aria-selected={isSelected}
+    on:click={onClick}
 >
     <div
         class="tree-leaf__icon"
         on:click={onIconClick}
-        title={leaf.childs.length ? (expanded ? $l10n('collapse') : $l10n('expand')) : undefined}
+        title={leaf.childs.length
+            ? expanded
+                ? $l10n("collapse")
+                : $l10n("expand")
+            : undefined}
+        role="button"
+        tabindex="0"
+        on:keydown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                onIconClick();
+            }
+        }}
     ></div>
     {getText(leaf)}
 </div>
@@ -101,8 +120,8 @@
         left: calc(4px + var(--level) * 24px);
         width: 24px;
         background: no-repeat 50% 50%;
-        opacity: .1;
-        transition: opacity .1s ease-in-out;
+        opacity: 0.1;
+        transition: opacity 0.1s ease-in-out;
     }
 
     .tree-leaf_empty_yes .tree-leaf__icon {
@@ -110,7 +129,7 @@
     }
 
     .tree-leaf_empty_no .tree-leaf__icon {
-        opacity: .3;
+        opacity: 0.3;
     }
 
     .tree-leaf_empty_no.tree-leaf_expanded_no .tree-leaf__icon {
@@ -132,6 +151,6 @@
     }
 
     .tree-leaf_empty_no .tree-leaf__icon:hover {
-        opacity: .7;
+        opacity: 0.7;
     }
 </style>

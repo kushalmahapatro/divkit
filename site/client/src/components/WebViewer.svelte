@@ -1,13 +1,20 @@
 <script lang="ts">
-    import { getContext, onDestroy, onMount } from 'svelte';
-    import { get } from 'svelte/store';
-    import type { DivkitInstance, DivExtensionClass } from '../../../../client/web/divkit/typings/common';
+    import { getContext, onDestroy, onMount } from "svelte";
+    import { get } from "svelte/store";
+    import type {
+        DivkitInstance,
+        DivExtensionClass,
+    } from "../../../../client/web/divkit/typings/common";
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    import { render as divkitRender, SizeProvider, lottieExtensionBuilder } from '../../artifacts/client-devtool.mjs';
-    import '../../artifacts/client.css';
-    import ViewportSelect from './ViewportSelect.svelte';
-    import PlatformSelect from './PlatformSelect.svelte';
+    import {
+        render as divkitRender,
+        SizeProvider,
+        lottieExtensionBuilder,
+    } from "../../artifacts/client-devtool.mjs";
+    import "../../artifacts/client.css";
+    import ViewportSelect from "./ViewportSelect.svelte";
+    import PlatformSelect from "./PlatformSelect.svelte";
     import {
         components,
         highlightElem,
@@ -15,24 +22,27 @@
         highlightModeClicked,
         highlightPart,
         selectedElem,
-        updateComponents
-    } from '../data/webStructure';
-    import { jsonStore } from '../data/jsonStore';
-    import { LANGUAGE_CTX, LanguageContext } from '../data/languageContext';
-    import { editorMode } from '../data/editorMode';
-    import { codeRunStore } from '../data/valueStore';
-    import { runCode } from '../utils/shortcuts';
-    import { webViewerErrors } from '../data/webViewerErrors';
-    import { sampleWarningStore } from '../data/sampleWarningStore';
-    import { templatesCheck } from '../utils/templatesCheck';
-    import Lottie from 'lottie-web/build/player/lottie_light';
-    import type { ComponentProps } from '../data/webStructure';
+        updateComponents,
+    } from "../data/webStructure";
+    import { jsonStore } from "../data/jsonStore";
+    import {
+        LANGUAGE_CTX,
+        type LanguageContext,
+    } from "../data/languageContext";
+    import { editorMode } from "../data/editorMode";
+    import { codeRunStore } from "../data/valueStore";
+    import { runCode } from "../utils/shortcuts";
+    import { webViewerErrors } from "../data/webViewerErrors";
+    import { sampleWarningStore } from "../data/sampleWarningStore";
+    import { templatesCheck } from "../utils/templatesCheck";
+    import Lottie from "lottie-web/build/player/lottie_light";
+    import type { ComponentProps } from "../data/webStructure";
 
-    const {l10n} = getContext<LanguageContext>(LANGUAGE_CTX);
+    const { l10n } = getContext<LanguageContext>(LANGUAGE_CTX);
 
-    let viewport = '';
-    let platform: 'desktop' | 'touch' | 'auto' = 'auto';
-    $: splitted = viewport.split('x');
+    let viewport = "";
+    let platform: "desktop" | "touch" | "auto" = "auto";
+    $: splitted = viewport.split("x");
     $: width = splitted[0] || 0;
     $: height = splitted[1] || 0;
 
@@ -60,7 +70,7 @@
     } | null = null;
 
     // todo ResizeObserver
-    const unsubscribeHighlight = highlightElem.subscribe(elem => {
+    const unsubscribeHighlight = highlightElem.subscribe((elem) => {
         if (elem) {
             const rootBbox = root.getBoundingClientRect();
             const previewBbox = previewWrapper.getBoundingClientRect();
@@ -86,14 +96,14 @@
                     top: previewBbox.top - rootBbox.top,
                     left: previewBbox.left - rootBbox.left,
                     width: previewBbox.width,
-                    height: previewBbox.height
+                    height: previewBbox.height,
                 },
                 top: finalBox.top - previewBbox.top,
                 left: finalBox.left - previewBbox.left,
                 right: previewBbox.right - finalBox.right,
                 bottom: previewBbox.bottom - finalBox.bottom,
                 margin,
-                padding
+                padding,
             };
         } else {
             highlight = null;
@@ -101,7 +111,7 @@
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function rerender(json: any, platform: 'desktop' | 'touch' | 'auto'): void {
+    function rerender(json: any, platform: "desktop" | "touch" | "auto"): void {
         if (!rootPreview) {
             return;
         }
@@ -117,22 +127,27 @@
         divBlock = divkitRender({
             target: rootPreview,
             json,
-            id: 'test',
+            id: "test",
             platform,
             extensions: new Map<string, DivExtensionClass>([
-                ['size_provider', SizeProvider],
-                ['lottie', lottieExtensionBuilder(Lottie.loadAnimation)],
+                ["size_provider", SizeProvider],
+                ["lottie", lottieExtensionBuilder(Lottie.loadAnimation)],
             ]),
             onError(event: {
                 error: Error & {
-                    level: 'error' | 'warn';
+                    level: "error" | "warn";
                     additional?: Record<string, unknown>;
                 };
             }) {
                 const additional = event.error.additional || {};
 
                 let args = Object.keys(additional)
-                    .filter(it => it !== 'json' && it !== 'origJson' && it !== 'fullpath')
+                    .filter(
+                        (it) =>
+                            it !== "json" &&
+                            it !== "origJson" &&
+                            it !== "fullpath",
+                    )
                     .reduce((acc: string[], item: string) => {
                         acc.push(`${item}=${additional[item]}`);
                         return acc;
@@ -141,25 +156,29 @@
                 $webViewerErrors = [
                     ...$webViewerErrors,
                     {
-                        message: event.error.message + (args.length ? ` (${args.join(', ')})` : ''),
-                        stack: (event.error.stack || '').split('\n'),
-                        level: event.error.level
-                    }
+                        message:
+                            event.error.message +
+                            (args.length ? ` (${args.join(", ")})` : ""),
+                        stack: (event.error.stack || "").split("\n"),
+                        level: event.error.level,
+                    },
                 ];
             },
-            onComponent(event: ComponentProps & {
-                type: 'mount' | 'destroy';
-                node: HTMLElement;
-            }) {
+            onComponent(
+                event: ComponentProps & {
+                    type: "mount" | "destroy";
+                    node: HTMLElement;
+                },
+            ) {
                 ++count;
-                if (event.type === 'mount') {
+                if (event.type === "mount") {
                     components.set(event.node, event);
-                } else if (event.type === 'destroy') {
+                } else if (event.type === "destroy") {
                     components.delete(event.node);
                 }
 
                 updateComponents();
-            }
+            },
         });
 
         requestAnimationFrame(() => {
@@ -229,12 +248,12 @@
     {#if $sampleWarningStore}
         <div class="web-viewer__warning">
             <div class="web-viewer__warning-text">
-                {$l10n('webSupportWarning')}
+                {$l10n("webSupportWarning")}
             </div>
             <button
                 class="web-viewer__warning-close"
-                title={$l10n('close')}
-                on:click={() => $sampleWarningStore = false}
+                title={$l10n("close")}
+                on:click={() => ($sampleWarningStore = false)}
             ></button>
         </div>
     {/if}
@@ -242,10 +261,16 @@
     <div class="web-viewer__select">
         <ViewportSelect bind:value={viewport} />
         <PlatformSelect bind:value={platform} />
-<!--        <VersionButton />-->
+        <!--        <VersionButton />-->
     </div>
 
-    <div class="web-viewer__content" bind:this={previewWrapper} style:width="{width}px" style:height="{height}px" on:scroll={onPreviewScroll}>
+    <div
+        class="web-viewer__content"
+        bind:this={previewWrapper}
+        style:width="{width}px"
+        style:height="{height}px"
+        on:scroll={onPreviewScroll}
+    >
         {#if $highlightMode}
             <div class="web-viewer__content-highlight-overlay-wrapper">
                 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
@@ -257,13 +282,20 @@
                     on:click={onHighlightClick}
                     style:width="{width}px"
                     style:height="{height}px"
+                    role="button"
+                    tabindex="0"
+                    on:keydown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            onHighlightClick();
+                        }
+                    }}
                 ></div>
             </div>
         {/if}
         <div bind:this={rootPreview} class="web-viewer__content-inner">
-            {#if $editorMode !== 'json' && !$codeRunStore}
+            {#if $editorMode !== "json" && !$codeRunStore}
                 <div class="web-viewer__run-placeholder">
-                    {$l10n('runCodeFirst').replace('%s', runCode.toString())}
+                    {$l10n("runCodeFirst").replace("%s", runCode.toString())}
                 </div>
             {/if}
         </div>
@@ -272,22 +304,44 @@
     {#if componentsCount && renderTime}
         <ul class="web-viewer__info">
             <li class="web-viewer__info-item">
-                <div class="web-viewer__info-icon web-viewer__info-icon_components"></div>
-                {`${$l10n('components')} ${componentsCount}`}
+                <div
+                    class="web-viewer__info-icon web-viewer__info-icon_components"
+                ></div>
+                {`${$l10n("components")} ${componentsCount}`}
             </li>
             <li class="web-viewer__info-item">
-                <div class="web-viewer__info-icon web-viewer__info-icon_time"></div>
-                {`${$l10n('timeToRender')} ${renderTime.toFixed(1)}ms`}
+                <div
+                    class="web-viewer__info-icon web-viewer__info-icon_time"
+                ></div>
+                {`${$l10n("timeToRender")} ${renderTime.toFixed(1)}ms`}
             </li>
         </ul>
     {/if}
 
     {#if highlight}
         {#key highlight.elem}
-            <div class="web-viewer__highlight-clip" style="top:{highlight.previewBbox.top}px;left:{highlight.previewBbox.left}px;width:{highlight.previewBbox.width}px;height:{highlight.previewBbox.height}px;">
-                <div class="web-viewer__highlight" class:web-viewer__highlight_show={$highlightPart & 1} style="top:{highlight.top}px;left:{highlight.left}px;right:{highlight.right}px;bottom:{highlight.bottom}px;border-width:{highlight.margin};">
-                    <div class="web-viewer__highlight-inner" class:web-viewer__highlight-inner_show={$highlightPart & 2} style="border-width:{highlight.padding};">
-                        <div class="web-viewer__highlight-inner2" class:web-viewer__highlight-inner2_show={$highlightPart & 4}></div>
+            <div
+                class="web-viewer__highlight-clip"
+                style="top:{highlight.previewBbox.top}px;left:{highlight
+                    .previewBbox.left}px;width:{highlight.previewBbox
+                    .width}px;height:{highlight.previewBbox.height}px;"
+            >
+                <div
+                    class="web-viewer__highlight"
+                    class:web-viewer__highlight_show={$highlightPart & 1}
+                    style="top:{highlight.top}px;left:{highlight.left}px;right:{highlight.right}px;bottom:{highlight.bottom}px;border-width:{highlight.margin};"
+                >
+                    <div
+                        class="web-viewer__highlight-inner"
+                        class:web-viewer__highlight-inner_show={$highlightPart &
+                            2}
+                        style="border-width:{highlight.padding};"
+                    >
+                        <div
+                            class="web-viewer__highlight-inner2"
+                            class:web-viewer__highlight-inner2_show={$highlightPart &
+                                4}
+                        ></div>
                     </div>
                 </div>
             </div>
@@ -406,8 +460,8 @@
         padding: 0;
         vertical-align: top;
         list-style: none;
-        opacity: .4;
-        transition: opacity .5s ease-in-out;
+        opacity: 0.4;
+        transition: opacity 0.5s ease-in-out;
         cursor: default;
     }
 
@@ -463,8 +517,8 @@
         border: none;
         border-radius: 4px;
         cursor: pointer;
-        opacity: .7;
-        transition: opacity .1s ease-in-out;
+        opacity: 0.7;
+        transition: opacity 0.1s ease-in-out;
     }
 
     .web-viewer__warning-close:hover {
